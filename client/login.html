@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimpleStream - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+	
+	<div class="left-section">
+	  <h2>Discover SimpleStream</h2>
+	  <div class="feature-cards-container">
+	    <div class="feature-card">
+	      <h3>Personalized Music Recommendations</h3>
+	      <p>Explore a wide range of music tailored to your taste.</p>
+	    </div>
+	    <div class="feature-card">
+	      <h3>Create and Manage Playlists</h3>
+	      <p>Organize your favorite songs into playlists for easy access.</p>
+	    </div>
+	    <!-- Add more feature cards as needed -->
+	  </div>
+	</div>
+
+    <div class="right-section">
+      <h2>Create an Account</h2>
+      <form id="registration-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Register</button>
+        <p class="switch-form" onclick="switchToLoginForm()">Already have an account? Login</p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function switchToLoginForm() {
+      window.location.href = 'login.html'; // Replace with the URL of your login page
+    }
+
+		const featureCardsContainer = document.querySelector('.feature-cards-container');
+		const featureCards = Array.from(document.querySelectorAll('.feature-cards-container .feature-card'));
+
+		let currentIndex = 0;
+		let isAnimating = false;
+
+		function scrollToNextCard() {
+		  if (isAnimating) return;
+
+		  const currentCard = featureCards[currentIndex];
+		  currentCard.classList.add('hidden');
+
+		  currentIndex = (currentIndex + 1) % featureCards.length;
+
+		  const nextCard = featureCards[currentIndex];
+		  nextCard.classList.remove('hidden');
+		  nextCard.style.transform = 'translateY(100%)';
+
+		  isAnimating = true;
+
+		  setTimeout(() => {
+		    currentCard.style.transform = 'translateY(-100%)';
+		    nextCard.style.transform = 'translateY(0)';
+		  }, 100);
+
+		  setTimeout(() => {
+		    currentCard.style.transform = 'translateY(0)';
+		    currentCard.classList.remove('hidden');
+		    isAnimating = false;
+		  }, 400);
+		}
+
+		setInterval(scrollToNextCard, 3000);
+
+
+  </script>
+</body>
+</html>
