@@ -1,14 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SimpleStream - Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>Welcome to SimpleStream</h1>
-  <!-- Your music player and other dashboard elements here -->
+<body class="index-page">
+  <header>
+    <h1>SimpleStream</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Library</a></li> 
+        <li><a href="#playlists">Playlists</a></li>
+        <li><a href="#">File Management</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <canvas id="waveCanvas"></canvas>
+
+  <main>
+    <section id="playlists" class="playlists">
+      <h2>Playlists</h2>
+
+      <div class="playlist-content" style="display: none;">
+        <button>Back</button>
+      </div>
+
+      <div class="boxes">
+        <!-- these will open something, or switch the page to view the playlists -->
+        <div class="playlist box">
+            Playlist 1
+        </div>
+
+        <div class="playlist box">
+            Playlist 2
+        </div>
+
+        <div class="playlist box">
+            Playlist 3
+        </div>
+
+        <div class="playlist box big">
+            +
+        </div>
+
+      </div>
+    </section>
+
+    <section class="shared-playlists">
+      <h2>Shared With You</h2>
+
+      <div class="boxes">
+        <div class="box">
+          <p>Shared playlists will show up here.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="file-management">
+      <h2>File Management</h2>
+      <div class="boxes">
+        <div class="box">
+          <p>Manage your audio files</p>
+          <a href="">here</a>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="music-player">
+
+      <!-- Implement your music player controls here (e.g., play, pause, previous, next) -->
+    <div style="float: left; width: 18vw;">
+      <img src="https://images.genius.com/7fea496c3c1081e740ef20120839512f.1000x1000x1.png">
+    </div>
+    
+    <div class="player-info" style="float: right; width: 80vw">
+      <!-- Display currently playing song information here -->
+      <div class="buttons">
+        <button>Back</button>
+        <button>Shuffle</button>
+
+        <button>Play</button>
+        
+        <button>Repeat</button>
+        <button>Next</button>
+      </div>
+
+
+      <p><b>song name</b></p>
+      <p>artist and album</p>
+      <p>1:56/2:00</p>
+      <progress value="112" max="120"></progress>
+    </div>
+        
+  </footer>
+
+  <script src="scripts/script.js"></script>
 
   <script>
 	// Check if the user is authenticated
