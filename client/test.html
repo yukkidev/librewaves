@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>Test page</h1>
+
+
+  <h3>User register (blob container creation only)</h3>
+  <button onclick="registerUser()">Register</button>
+  <p id="userRegisterStatus"></p>
+  <h3>File Upload</h3>
+  <input type="file" id="fileInput">
+  <button onclick="uploadFile()">Upload</button>
+  <p id="uploadStatus"></p>
+  <button onclick="deleteFile()">Delete</button>
+  <p id="deleteStatus"></p>
+
+  <button onclick="getFiles()">Get Files</button>
+  <p id="files"></p>
+
+
+  <script>
+
+    function registerUser() {
+      const username = 'yukkidevtest'; // Replace with the actual username
+
+      fetch('http://127.0.0.1:5000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `username=${encodeURIComponent(username)}`
+      })
+        .then(response => response.json())
+        .then(data => {
+          const registerStatus = document.getElementById("userRegisterStatus");
+
+          registerStatus.textContent = data.message;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const registerStatus = document.getElementById("userRegisterStatus");
+          registerStatus.textContent = error;
+        });
+    }
+
+    function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please select a file.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Replace 'placeholder_username' with the actual username of the logged-in user
+      const username = 'yukkidevtest';
+      formData.append('username', username);
+
+      fetch('http://127.0.0.1:5000/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          const uploadStatus = document.getElementById('uploadStatus');
+          uploadStatus.textContent = data.message;
+          // You can perform additional actions here after successful upload
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const uploadStatus = document.getElementById('uploadStatus');
+          uploadStatus.textContent = 'Upload failed. Please try again.';
+        });
+    }
+
+    function getFiles() {
+      const username = 'yukkidevtest';
+
+      fetch(`http://127.0.0.1:5000/files?username=${encodeURIComponent(username)}`, {
+        method: 'GET',
+      })
+        .then(response => response.json())
+        .then(data => {
+          const filePTag = document.getElementById('files');
+          filePTag.textContent = data.join(', '); // Join the file names with a comma
+          // You can perform additional actions here after successful retrieval
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const filePTag = document.getElementById('files');
+          filePTag.textContent = 'GET request failed. Please try again.';
+        });
+    }
+
+
+    function deleteFile() {
+      const username = 'yukkidevtest';
+
+      const fileInput = document.getElementById("fileInput");
+      const filename = fileInput.files[0].name;
+
+      fetch(`http://127.0.0.1:5000/delete?username=${encodeURIComponent(username)}&filename=${encodeURIComponent(filename)}`, {
+        method: 'DELETE'
+      })
+        .then(response => response.json())
+        .then(data => {
+          const deleteStatus = document.getElementById('deleteStatus');
+          deleteStatus.textContent = data.message;
+          // You can perform additional actions here after successful deletion
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const deleteStatus = document.getElementById('deleteStatus');
+          deleteStatus.textContent = 'Deletion failed. Please try again.';
+        });
+    }
+  </script>
+</body>
+</html>
