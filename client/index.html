@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SimpleStream - Dashboard</title>
+  <title>LibreWaves - Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="index-page">
   <header>
-    <h1>SimpleStream</h1>
+    <h1>LibreWaves</h1>
     <nav>
       <ul>
         <li><a href="#">Home</a></li>
@@ -77,24 +77,22 @@
 
   <footer class="music-player">
 
-      <!-- Implement your music player controls here (e.g., play, pause, previous, next) -->
-    <div style="float: left; width: 18vw;">
+    <div>
       <img src="https://images.genius.com/7fea496c3c1081e740ef20120839512f.1000x1000x1.png">
     </div>
     
-    <div class="player-info" style="float: right; width: 80vw">
-      <!-- Display currently playing song information here -->
-      <div class="buttons">
-        <button>Back</button>
-        <button>Shuffle</button>
+    <!-- Display currently playing song information here -->
+    <div class="buttons">
+      <button><-</button>
+      <button>Shuffle</button>
 
-        <button>Play</button>
-        
-        <button>Repeat</button>
-        <button>Next</button>
-      </div>
+      <button>Play</button>
+      
+      <button>Repeat</button>
+      <button>-></button>
+    </div>
 
-
+    <div class="song-info">
       <p><b>song name</b></p>
       <p>artist and album</p>
       <p>1:56/2:00</p>
@@ -103,16 +101,7 @@
         
   </footer>
 
-  <script src="scripts/script.js"></script>
+  <script src="scripts/dashboard.js"></script>
 
-  <script>
-	// Check if the user is authenticated
-	const isAuthenticated = true/* logic to check authentication status */;
-
-	// Redirect the user to login.html if not authenticated
-	if (!isAuthenticated) {
-	  window.location.href = 'login.html';
-	}
-  </script>
 </body>
 </html>

@@ -1,8 +1,12 @@
-import os
+# import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from azure.core.exceptions import AzureError, ResourceExistsError
+from werkzeug.security import generate_password_hash
+import jwt
+import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///simplestream.db'

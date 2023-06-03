@@ -3,14 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SimpleStream - Login</title>
+  <title>LibreWaves - Login</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body class="login-page">
+  
+  <dialog id="loginModal">
+      <button id="closeButton">&times;</button>
+
+      <h3>Login</h3>
+
+      <form id="loginForm">
+          <input type="text" id="username" placeholder="Username">
+          <input type="password" id="password" placeholder="Password">
+          <button type="submit">Login</button>
+      </form>
+  </dialog>
+
   <div class="container">
     <div class="left-section">
       
-      <h2>Discover SimpleStream</h2>
+      <h2>Discover LibreWaves</h2>
 
       <div class="cards">
 	      <div class="card">
@@ -44,8 +58,8 @@
           <p>Organize your favorite songs into playlists for easy access.</p>
 	      </div>
       </div>
-
     </div>
+    
     <div class="right-section">
       <h2>Create an Account</h2>
       <form id="registration-form">
@@ -67,19 +81,7 @@
     </div>
   </div>
 
-  <script>
-	  document.getElementById('registration-form').addEventListener('submit', function(event) {
-	    event.preventDefault(); // Prevent the default form submission behavior
+  <script src="scripts/login.js"></script>
 
-	    // Perform any necessary validation or processing here
-
-	    // Redirect to the desired page
-	    window.location.href = "index.html";
-	  });
-
-    function switchToLoginForm() {
-      window.location.href = 'login.html'; // Replace with the URL of your login page
-    }
-  </script>
 </body>
 </html>
