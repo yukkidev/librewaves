@@ -1,46 +1,65 @@
-// consts
+const API_URL = 'http://127.0.0.1:5000';
 
 const loginModalCloseButton = document.getElementById('closeButton');
 const loginModal = document.getElementById('loginModal');
+const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registration-form');
 
-// events
-
 loginModalCloseButton.addEventListener('click', function() {
-	// clear the form
-
 	document.getElementById('username').value = '';
 	document.getElementById('password').value = '';
-
 	loginModal.close();
 });
 
-loginModal.addEventListener('submit', function(event) {
+loginForm.addEventListener('submit', function(event) {
 	event.preventDefault();
 
-	// attempt to login user here
+	const username = document.getElementById('username').value;
+	const password = document.getElementById('password').value;
 
-	// if auth failed, send alert and return 
-
-	// else, store token
-
-	// redirect user to dashboard
-	window.location.href = "index.html";
-
+	fetch(`${API_URL}/login`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ username, password })
+	})
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				alert(data.error || data.message);
+				return;
+			}
+			localStorage.setItem('username', username);
+			window.location.href = "index.html";
+		})
+		.catch(error => {
+			console.error('Login error:', error);
+			alert('Login failed. Please try again.');
+		});
 });
 
 registerForm.addEventListener('submit', function(event) {
-	event.preventDefault(); // Prevent the default form submission behavior
+	event.preventDefault();
 
-	// attempt to register user here  
+	const formData = new FormData(registerForm);
 
-	// store token
-
-	// Redirect to the dashboard
-	window.location.href = "index.html";
+	fetch(`${API_URL}/register`, {
+		method: 'POST',
+		body: formData
+	})
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				alert(data.error);
+				return;
+			}
+			alert('Registration successful! Please login.');
+			loginModal.showModal();
+		})
+		.catch(error => {
+			console.error('Registration error:', error);
+			alert('Registration failed. Please try again.');
+		});
 });
-
-// functions
 
 function switchToLoginForm() {
 	loginModal.showModal();

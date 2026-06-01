@@ -1,10 +1,10 @@
-# import os
+import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from azure.core.exceptions import AzureError, ResourceExistsError
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 
@@ -13,7 +13,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///simplestream.db'
 db = SQLAlchemy(app)
 
 # Azure Blob Storage configuration
-AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=librewaves;AccountKey=BskP51KKJyrHTubyE3Dlmk1sz1BHfQkH5EpiGoxZDC3Ce57/va6dsxzDLHtv+WRCjTsVFvUHqpKF+AStdsLHtQ==;EndpointSuffix=core.windows.net'
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
+if not AZURE_STORAGE_CONNECTION_STRING:
+	raise RuntimeError('AZURE_STORAGE_CONNECTION_STRING environment variable is not set')
 
 # Create a blob service client
 blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
@@ -72,16 +74,23 @@ def create_playlist():
 # Delete a playlist endpoint
 @app.route('/playlist/<int:playlist_id>', methods=['DELETE'])
 def delete_playlist(playlist_id):
+	data = request.get_json() or {}
+	user_id = data.get('user_id')
 	playlist = Playlist.query.get(playlist_id)
-	if playlist:
-		db.session.delete(playlist)
-		db.session.commit()
-		return jsonify({'message': 'Playlist deleted successfully'})
-	return jsonify({'message': 'Playlist not found'})
+	if not playlist:
+		return jsonify({'message': 'Playlist not found'}), 404
+	if user_id and playlist.user_id != user_id:
+		return jsonify({'message': 'Unauthorized'}), 403
+	db.session.delete(playlist)
+	db.session.commit()
+	return jsonify({'message': 'Playlist deleted successfully'})
 
 # Add a new song to a playlist endpoint
 @app.route('/playlist/<int:playlist_id>/song', methods=['POST'])
 def add_song_to_playlist(playlist_id):
+	playlist = Playlist.query.get(playlist_id)
+	if not playlist:
+		return jsonify({'message': 'Playlist not found'}), 404
 	data = request.get_json()
 	title = data['title']
 	artist = data['artist']
@@ -112,16 +121,23 @@ def register():
 	# db.session.commit()
 
 	username = request.form['username']
+	email = request.form['email']
+	password = request.form['password']
 
-	print(username)
+	# Check if user already exists
+	existing_user = User.query.filter_by(username=username).first()
+	if existing_user:
+		return jsonify({'error': 'Username already exists. Please choose a different username.'}), 409
 
 	try:
-		# Create a unique container name based on the username
-		container_name = username.lower()  # You can modify this if needed
+		container_name = username.lower()
 
-		# Create a ContainerClient instance and attempt to create the container
 		container_client = blob_service_client.get_container_client(container_name)
 		container_client.create_container()
+
+		user = User(username=username, email=email, password=generate_password_hash(password))
+		db.session.add(user)
+		db.session.commit()
 
 		return jsonify({'message': 'User registered successfully'})
 	except ResourceExistsError:
@@ -137,7 +153,7 @@ def login():
 	username = data['username']
 	password = data['password']
 	user = User.query.filter_by(username=username).first()
-	if user and user.password == password:
+	if user and check_password_hash(user.password, password):
 		return jsonify({'message': 'Login successful'})
 	return jsonify({'message': 'Invalid credentials'})
 
@@ -190,7 +206,7 @@ def get_files():
 		return jsonify(files), 200
 	except Exception as e:
 		print(e)
-		return str(e), 500
+		return jsonify({'error': str(e)}), 500
 
 # Rename file endpoint
 @app.route('/rename', methods=['PUT'])
@@ -225,8 +241,6 @@ def rename_file():
 @app.route('/delete', methods=['DELETE'])
 def delete_file():
 	filename = request.args.get('filename')
-	username = request.args.get('username')
-
 	username = request.args.get('username')
 	if not username:
 		return jsonify({'error': 'Username not provided'}), 400
